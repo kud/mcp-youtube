@@ -1,6 +1,6 @@
 {
   "name": "@kud/mcp-youtube",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "description": "MCP server for the full YouTube Data API v3 — playlists, videos, channels, community, captions, and media, all conversationally from Claude.",
   "main": "dist/index.js",
