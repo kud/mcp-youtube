@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mcp-youtube": {
+      "command": "npx",
+      "args": ["tsx", "src/index.ts"]
+    }
+  }
+}

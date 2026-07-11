@@ -1,0 +1,67 @@
+{
+  "name": "@kud/mcp-youtube",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server for YouTube — manage playlists conversationally: create, add, prune, and clean up tombstones and duplicates.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "mcp-youtube": "./dist/index.js"
+  },
+  "scripts": {
+    "setup": "node setup.js",
+    "build": "tsc -p tsconfig.json && chmod +x dist/index.js",
+    "build:watch": "tsc -p tsconfig.json --watch",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "inspect:dev": "npx @modelcontextprotocol/inspector tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "files": [
+    "dist",
+    "setup.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "youtube",
+    "model-context-protocol",
+    "playlists",
+    "google"
+  ],
+  "author": "kud",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kud/mcp-youtube.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kud/mcp-youtube/issues"
+  },
+  "homepage": "https://github.com/kud/mcp-youtube#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "googleapis": "173.0.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.1",
+    "@vitest/coverage-v8": "4.1.10",
+    "tsx": "4.23.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}
