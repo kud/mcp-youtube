@@ -45,16 +45,18 @@ Missing YouTube OAuth credentials — set MCP_YOUTUBE_CLIENT_ID / MCP_YOUTUBE_CL
 
 ## Installing the server
 
-Install as a Claude plugin:
+The server works with any MCP-compatible client — Claude Desktop, Claude Code, Cursor, Cline, Zed, Continue, and others.
 
-```sh
-/plugin install youtube@kud
-```
-
-Or install the package directly:
+Install the package:
 
 ```sh
 npm install -g @kud/mcp-youtube
+```
+
+In Claude Code or Claude Desktop you can instead install it as a plugin, which wires up the registration for you:
+
+```sh
+/plugin install youtube@kud
 ```
 
 Either way, run `npm run setup` before first use.

@@ -5,7 +5,7 @@
 ![npm](https://img.shields.io/npm/v/%40kud%2Fmcp-youtube?style=flat-square&color=CB3837)
 ![MIT](https://img.shields.io/badge/licence-MIT-22C55E?style=flat-square)
 
-**▶️ MCP server for the full YouTube Data API v3 — playlists, videos, channels, community, captions, and media, conversationally from Claude**
+**▶️ MCP server for the full YouTube Data API v3 — playlists, videos, channels, community, captions, and media, conversationally from any MCP client**
 
 <a href="https://kud.io/projects/mcp-youtube">Website</a> · <a href="https://kud.io/projects/mcp-youtube/docs">Documentation</a>
 
@@ -24,16 +24,18 @@
 
 ## Install
 
-Install as a Claude plugin:
+The server works with any MCP-compatible client — Claude Desktop, Claude Code, Cursor, Cline, Zed, Continue, and others.
 
-```sh
-/plugin install youtube@kud
-```
-
-Or install the package directly:
+Install the package:
 
 ```sh
 npm install -g @kud/mcp-youtube
+```
+
+In Claude Code or Claude Desktop you can instead install it as a plugin, which wires up the registration for you:
+
+```sh
+/plugin install youtube@kud
 ```
 
 Either way, run the one-time OAuth setup before first use:
@@ -58,6 +60,28 @@ export MCP_YOUTUBE_REFRESH_TOKEN=$(security find-generic-password -s mcp-youtube
 
 > **Tip:** set the OAuth app's publishing status to **In production** in Google Cloud. `youtube.force-ssl` is a _sensitive_ scope, and while the app sits in _Testing_ the refresh token expires after 7 days.
 
+## Configuration
+
+Register the server with your MCP client. The exact config file and its location depend on the client — Claude Desktop, for example, uses `claude_desktop_config.json` (Settings → Developer → Edit Config); Cursor, Cline, Zed, and Continue each have their own. The registration follows the standard `mcpServers` shape:
+
+```json
+{
+  "mcpServers": {
+    "youtube": {
+      "command": "npx",
+      "args": ["-y", "@kud/mcp-youtube"],
+      "env": {
+        "MCP_YOUTUBE_CLIENT_ID": "your-client-id",
+        "MCP_YOUTUBE_CLIENT_SECRET": "your-client-secret",
+        "MCP_YOUTUBE_REFRESH_TOKEN": "your-refresh-token"
+      }
+    }
+  }
+}
+```
+
+If you installed via `/plugin install youtube@kud`, the plugin handles registration — you only need to supply the three environment variables above.
+
 ## Usage
 
 YouTube's Data API v3 gives every project a fixed **10,000 quota units/day**. A single careless `search`, bulk delete, or video upload can burn through a meaningful chunk of that, so every tool documents its cost up front — and every destructive or outward-irreversible tool requires an explicit `confirm: true`.
@@ -76,7 +100,7 @@ YouTube's Data API v3 gives every project a fixed **10,000 quota units/day**. A 
 | Captions & media    | `list-captions`, `upload-caption`, `update-caption`, `download-caption`, `delete-caption`, `set-thumbnail`, `set-watermark`, `unset-watermark`, `list-playlist-images`, `upload-playlist-image`, `update-playlist-image`, `delete-playlist-image` | [Captions & Media](https://kud.io/projects/mcp-youtube/docs/captions-and-media)       |
 | Reference data      | `list-activities`, `list-video-categories`, `list-i18n-languages`, `list-i18n-regions`, `list-video-abuse-report-reasons`, `list-members`, `list-membership-levels`                                                                               | [Reference Data](https://kud.io/projects/mcp-youtube/docs/reference-data)             |
 
-Once installed, just talk to Claude:
+Once installed, just ask your MCP client:
 
 ```console
 > Clean up the tombstones in my "Focus" playlist
