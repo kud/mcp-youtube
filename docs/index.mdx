@@ -1,0 +1,14 @@
+---
+title: 👋 Introduction
+description: mcp-youtube is an MCP server that lets you search, create, and clean up YouTube playlists conversationally from Claude.
+---
+
+mcp-youtube is a Model Context Protocol server that wraps the YouTube Data API v3, giving Claude eight tools for the full playlist lifecycle — search, list, read, create, add to, prune, and delete. Every tool reports its quota cost up front, and the two irreversible ones refuse to run without an explicit `confirm: true`.
+
+## What's here
+
+- [🔑 Setup](/projects/mcp-youtube/docs/setup) — OAuth authorisation, credential storage, and environment variable overrides
+- [🔍 Searching](/projects/mcp-youtube/docs/searching) — `search`, `list-playlists`, `get-playlist`
+- [➕ Creating & Adding](/projects/mcp-youtube/docs/creating-and-adding) — `create-playlist`, `add-to-playlist`
+- [🧹 Cleaning Playlists](/projects/mcp-youtube/docs/cleaning-playlists) — `clean-playlist`'s tombstone, duplicate, and channel-prune scan
+- [🗑️ Deleting & Pruning](/projects/mcp-youtube/docs/deleting-and-pruning) — `remove-from-playlist`, `delete-playlist`, and the confirm requirement

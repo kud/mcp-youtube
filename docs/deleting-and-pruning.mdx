@@ -1,0 +1,48 @@
+---
+title: 🗑️ Deleting & Pruning
+description: The two irreversible tools — remove-from-playlist and delete-playlist — and the confirm safeguard both require.
+---
+
+Two tools in mcp-youtube cause permanent, irreversible deletion outside of `clean-playlist`'s planned cleanup. Both refuse to run unless called with `confirm: true`.
+
+## `remove-from-playlist`
+
+Permanently removes specific items from a playlist by playlist-item ID. Costs **50 quota units per item**.
+
+| Parameter         | Type       | Default | Notes                             |
+| ----------------- | ---------- | ------- | --------------------------------- |
+| `playlistItemIds` | `string[]` | —       | Required, at least one item ID    |
+| `confirm`         | `boolean`  | `false` | Must be `true` to actually remove |
+
+Without `confirm: true`, the tool returns an error instead of acting:
+
+```
+Error: confirm must be true to remove 3 item(s) — this permanently deletes playlist entries at 50 units each
+```
+
+With confirmation, items are removed one at a time; failures are collected separately rather than aborting the batch, and the response reports `removed`, `failed`, and `quotaCost` (`removed.length * 50`).
+
+Note that `playlistItemIds` are **playlist-item IDs**, not video IDs — you get these from `get-playlist` or from a `clean-playlist` dry-run plan.
+
+## `delete-playlist`
+
+Permanently deletes an entire playlist. Costs **50 quota units**.
+
+| Parameter    | Type      | Default | Notes                             |
+| ------------ | --------- | ------- | --------------------------------- |
+| `playlistId` | `string`  | —       | Required                          |
+| `confirm`    | `boolean` | `false` | Must be `true` to actually delete |
+
+Without `confirm: true`:
+
+```
+Error: confirm must be true to permanently delete playlist PLxxxxxxxx
+```
+
+With confirmation, the response is:
+
+```json
+{ "deleted": "PLxxxxxxxx", "quotaCost": 50 }
+```
+
+There is no undo for either tool — the confirm gate is the only safety net, so treat it as the last checkpoint before data loss.

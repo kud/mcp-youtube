@@ -2,9 +2,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { google, youtube_v3 } from "googleapis"
-import { readFileSync } from "fs"
-import { homedir } from "os"
-import { join } from "path"
 import { z } from "zod"
 
 // Vitest sets VITEST=true in the test process. Import-time side effects
@@ -30,29 +27,12 @@ if (process.argv[2] === "setup" && !runningUnderTest) {
   process.exit(result.status ?? 0)
 }
 
-type YoutubeConfig = {
-  clientId?: string
-  clientSecret?: string
-  refreshToken?: string
-}
-
-const loadConfig = (): YoutubeConfig => {
-  try {
-    return JSON.parse(
-      readFileSync(join(homedir(), ".config", "youtube.json"), "utf8"),
-    )
-  } catch {
-    return {}
-  }
-}
-
-const config = loadConfig()
-
-const CLIENT_ID = process.env["MCP_YOUTUBE_CLIENT_ID"] ?? config.clientId
-const CLIENT_SECRET =
-  process.env["MCP_YOUTUBE_CLIENT_SECRET"] ?? config.clientSecret
-const REFRESH_TOKEN =
-  process.env["MCP_YOUTUBE_REFRESH_TOKEN"] ?? config.refreshToken
+// Credentials are read from the environment only. Where the values come from —
+// a keychain-backed shell export, the MCP client's `env` block, a secrets
+// manager — is the operator's concern; the server stays store-agnostic.
+const CLIENT_ID = process.env["MCP_YOUTUBE_CLIENT_ID"]
+const CLIENT_SECRET = process.env["MCP_YOUTUBE_CLIENT_SECRET"]
+const REFRESH_TOKEN = process.env["MCP_YOUTUBE_REFRESH_TOKEN"]
 
 const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET)
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
@@ -556,7 +536,7 @@ server.registerTool(
 const main = async () => {
   if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
     console.error(
-      "Missing YouTube OAuth credentials — run `npm run setup` (or set MCP_YOUTUBE_CLIENT_ID / MCP_YOUTUBE_CLIENT_SECRET / MCP_YOUTUBE_REFRESH_TOKEN)",
+      "Missing YouTube OAuth credentials — set MCP_YOUTUBE_CLIENT_ID / MCP_YOUTUBE_CLIENT_SECRET / MCP_YOUTUBE_REFRESH_TOKEN in the environment (run `npm run setup` to mint a refresh token)",
     )
     process.exit(1)
   }

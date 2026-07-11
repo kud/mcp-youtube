@@ -1,0 +1,47 @@
+---
+title: 🔍 Searching
+description: The three read-only tools for finding videos, channels, and playlists, and for reading your own playlists.
+---
+
+Three tools cover discovery and reading — none of them mutate anything, but they vary wildly in quota cost, so it's worth knowing which is which.
+
+| Tool             | Quota cost | Notes                                          |
+| ---------------- | ---------- | ---------------------------------------------- |
+| `search`         | 100 units  | Videos, channels, or playlists — use sparingly |
+| `list-playlists` | 1 unit     | Lists the authenticated user's playlists       |
+| `get-playlist`   | 1 unit     | Reads a playlist's items                       |
+
+## `search`
+
+Searches YouTube itself — not your own library. This is the expensive one: **100 quota units per call**, ten times the cost of any other tool in this server.
+
+| Parameter    | Type                                 | Default   | Notes                   |
+| ------------ | ------------------------------------ | --------- | ----------------------- |
+| `query`      | `string`                             | —         | Required search query   |
+| `maxResults` | `number` (1–50)                      | `10`      |                         |
+| `type`       | `"video" \| "channel" \| "playlist"` | `"video"` | Resource type to search |
+
+Results include `videoId`/`channelId`/`playlistId` (whichever applies), `title`, `channelTitle`, `publishedAt`, and `description`.
+
+## `list-playlists`
+
+Lists the authenticated user's own playlists (`mine: true`), 1 unit per call regardless of page size.
+
+| Parameter    | Type            | Default | Notes                           |
+| ------------ | --------------- | ------- | ------------------------------- |
+| `maxResults` | `number` (1–50) | `25`    |                                 |
+| `pageToken`  | `string`        | —       | Page token from a previous call |
+
+Each returned playlist includes `playlistId`, `title`, `description`, `itemCount`, and `privacyStatus`. The response also carries `nextPageToken` for paging.
+
+## `get-playlist`
+
+Reads the items inside a single playlist, 1 unit per call.
+
+| Parameter    | Type            | Default | Notes                           |
+| ------------ | --------------- | ------- | ------------------------------- |
+| `playlistId` | `string`        | —       | Required                        |
+| `maxResults` | `number` (1–50) | `50`    |                                 |
+| `pageToken`  | `string`        | —       | Page token from a previous call |
+
+Each returned item includes `playlistItemId`, `videoId`, `title`, `channelTitle`, `channelId`, `position`, and `publishedAt`. This is the same underlying scan that `clean-playlist` uses internally to build its removal plan — see [Cleaning Playlists](/projects/mcp-youtube/docs/cleaning-playlists).

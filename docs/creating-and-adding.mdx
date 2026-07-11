@@ -1,0 +1,38 @@
+---
+title: ➕ Creating & Adding
+description: Creating new playlists and adding videos to them.
+---
+
+## `create-playlist`
+
+Creates a new playlist. Costs **50 quota units**.
+
+| Parameter       | Type                                  | Default     | Notes               |
+| --------------- | ------------------------------------- | ----------- | ------------------- |
+| `title`         | `string`                              | —           | Required            |
+| `description`   | `string`                              | `""`        |                     |
+| `privacyStatus` | `"private" \| "unlisted" \| "public"` | `"private"` | Playlist visibility |
+
+Returns the created playlist's `playlistId`, `title`, `description`, `itemCount`, and `privacyStatus`.
+
+## `add-to-playlist`
+
+Adds one or more videos to an existing playlist. Costs **50 quota units per video** — adding ten videos costs 500 units, so batch thoughtfully.
+
+| Parameter    | Type       | Default | Notes                        |
+| ------------ | ---------- | ------- | ---------------------------- |
+| `playlistId` | `string`   | —       | Required                     |
+| `videoIds`   | `string[]` | —       | Required, at least one video |
+
+Videos are added one at a time; if any individual add fails, it's collected into a `failed` list rather than aborting the whole batch. The tool only reports a hard error if _every_ video failed. On partial or full success it returns:
+
+```json
+{
+  "playlistId": "PLxxxxxxxx",
+  "added": ["videoId1", "videoId2"],
+  "failed": [],
+  "quotaCost": 100
+}
+```
+
+`quotaCost` reflects only the videos that actually succeeded (`added.length * 50`).

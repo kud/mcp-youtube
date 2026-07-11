@@ -1,0 +1,59 @@
+---
+title: 🧹 Cleaning Playlists
+description: How clean-playlist scans for tombstones, duplicates, and unwanted channels, and why it defaults to a dry run.
+---
+
+`clean-playlist` is the heaviest tool in the server, both in what it does and in how it protects you from yourself. It scans an entire playlist, builds a removal plan against up to three criteria, and — by default — stops there.
+
+## What it detects
+
+| Criterion         | Flag               | Behaviour                                                               |
+| ----------------- | ------------------ | ----------------------------------------------------------------------- |
+| Tombstones        | `removeTombstones` | Removes items whose title is exactly `Deleted video` or `Private video` |
+| Duplicates        | `dedupe`           | Removes repeat `videoId`s, keeping the first occurrence                 |
+| Unwanted channels | `pruneChannelIds`  | Removes items whose `videoOwnerChannelId` matches a given channel ID    |
+
+| Parameter          | Type       | Default | Notes                                                     |
+| ------------------ | ---------- | ------- | --------------------------------------------------------- |
+| `playlistId`       | `string`   | —       | Required                                                  |
+| `removeTombstones` | `boolean`  | `true`  |                                                           |
+| `dedupe`           | `boolean`  | `false` |                                                           |
+| `pruneChannelIds`  | `string[]` | `[]`    | Channel IDs whose videos should be removed                |
+| `dryRun`           | `boolean`  | `true`  | When `true`, only returns the plan — no deletes performed |
+
+## Quota cost
+
+Scanning the whole playlist costs **1 unit per page** (50 items per page, the same pagination `get-playlist` uses internally). Each actual delete costs **50 units**, so the total cost of a real cleanup is `pages scanned + (deletes × 50)`.
+
+## Dry run by default
+
+`dryRun` defaults to `true`, so the first call to `clean-playlist` always returns a plan rather than deleting anything:
+
+```json
+{
+  "dryRun": true,
+  "playlistId": "PLxxxxxxxx",
+  "scanned": 214,
+  "plannedDeletes": 6,
+  "estimatedQuotaCost": 300,
+  "items": [
+    { "playlistItemId": "...", "videoId": "...", "title": "Deleted video" }
+  ]
+}
+```
+
+From the README's example conversation:
+
+```console
+> Clean up the tombstones in my "Focus" playlist
+
+Scanned 214 items — found 6 tombstones ([Deleted video]/[Private video]).
+This is a dry run, no changes made. Estimated cost to delete: 300 units.
+Want me to go ahead?
+
+> Yes, and dedupe it too
+
+Deleted 6 tombstones and 3 duplicates (9 items, 450 units).
+```
+
+Pass `dryRun: false` (or simply confirm in conversation, which prompts Claude to re-call with `dryRun: false`) to actually delete. When it runs for real, each delete is throttled with a short pause between requests, and the response reports `scanned`, `deleted`, `failed`, and the total `quotaCost` incurred.
