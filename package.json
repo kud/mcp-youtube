@@ -2,7 +2,7 @@
   "name": "@kud/mcp-youtube",
   "version": "0.1.1",
   "type": "module",
-  "description": "MCP server for YouTube — manage playlists conversationally: create, add, prune, and clean up tombstones and duplicates.",
+  "description": "MCP server for the full YouTube Data API v3 — playlists, videos, channels, community, captions, and media, all conversationally from Claude.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -34,6 +34,8 @@
     "youtube",
     "model-context-protocol",
     "playlists",
+    "videos",
+    "channels",
     "google"
   ],
   "author": "kud",

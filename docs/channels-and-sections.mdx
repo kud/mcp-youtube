@@ -1,0 +1,37 @@
+---
+title: 📺 Channels & Sections
+description: Update your channel's branding and manage the homepage shelves (channel sections).
+---
+
+Six tools cover your channel's own metadata and the "shelves" (channel sections) shown on its homepage.
+
+| Tool                     | Quota cost | Notes                                         |
+| ------------------------ | ---------- | --------------------------------------------- |
+| `update-channel`         | 50 units   | Full-replace on brandingSettings, reads first |
+| `list-channels`          | 1 unit     | Your own channel(s)                           |
+| `list-channel-sections`  | 1 unit     | Yours, or another channel's                   |
+| `create-channel-section` | 50 units   |                                               |
+| `update-channel-section` | 50 units   | Full-replace, reads first                     |
+| `delete-channel-section` | 50 units   | Requires `confirm: true`                      |
+
+## `update-channel`
+
+Updates your channel's branding metadata — title, description, keywords, the trailer shown to non-subscribers, default language, and country. The YouTube API only allows updating `brandingSettings` (or `invideoPromotion`, which this server doesn't expose) via `channels.update`, and it's a **full-replace** on that part, so the tool reads your current branding settings first and only overrides the fields you pass.
+
+| Parameter             | Type     | Notes                                 |
+| --------------------- | -------- | ------------------------------------- |
+| `channelId`           | `string` | Required                              |
+| `title`               | `string` | Unchanged if omitted                  |
+| `description`         | `string` | Unchanged if omitted                  |
+| `keywords`            | `string` | Space-separated, unchanged if omitted |
+| `unsubscribedTrailer` | `string` | Video ID, unchanged if omitted        |
+| `defaultLanguage`     | `string` | Unchanged if omitted                  |
+| `country`             | `string` | Unchanged if omitted                  |
+
+## `list-channels`
+
+Lists the authenticated user's own channel(s) with snippet, statistics, and status — no parameters.
+
+## Channel sections
+
+`list-channel-sections` reads the shelves on your channel's homepage (or another channel's, via `channelId`). `create-channel-section` adds a new shelf — `type` determines its content (e.g. `singlePlaylist`, `multiplePlaylists`, `allPlaylists`, `multipleChannels`), with `playlistIds`/`channelIds` supplying the items. `update-channel-section` is a full-replace on `snippet`/`contentDetails`, reading the section first so an update that only moves its `position` won't blank its `title` or content list. `delete-channel-section` permanently removes a shelf and requires `confirm: true`.

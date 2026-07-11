@@ -1,0 +1,66 @@
+---
+title: 🎬 Videos
+description: List, update, rate, delete, upload, and report videos you own or have watched.
+---
+
+Seven tools cover the video lifecycle — from reading metadata through to a resumable upload. `upload-video` is the single most expensive tool in the server.
+
+| Tool                 | Quota cost | Notes                                       |
+| -------------------- | ---------- | ------------------------------------------- |
+| `list-videos`        | 1 unit     | Up to 50 videos by ID                       |
+| `update-video`       | 50 units   | Full-replace on snippet/status, reads first |
+| `rate-video`         | 50 units   | like / dislike / none                       |
+| `get-video-rating`   | 1 unit     | Your rating for up to 50 videos             |
+| `delete-video`       | 50 units   | Requires `confirm: true`                    |
+| `upload-video`       | 1600 units | Resumable upload from a local file path     |
+| `report-video-abuse` | 50 units   | Requires `confirm: true`                    |
+
+## `list-videos`
+
+Fetches snippet, contentDetails, status, and statistics for up to 50 videos.
+
+| Parameter  | Type       | Notes                    |
+| ---------- | ---------- | ------------------------ |
+| `videoIds` | `string[]` | Required, 1–50 video IDs |
+
+## `update-video`
+
+Updates title, description, category, tags, privacy, and related flags. This is a **full-replace** operation on the `snippet`/`status` parts, so the tool reads the video's current values first and only overrides the fields you pass — an update that only changes `title` will never blank `description` or `tags`.
+
+| Parameter                 | Type                                  | Notes                |
+| ------------------------- | ------------------------------------- | -------------------- |
+| `videoId`                 | `string`                              | Required             |
+| `title`                   | `string`                              | Unchanged if omitted |
+| `description`             | `string`                              | Unchanged if omitted |
+| `categoryId`              | `string`                              | Unchanged if omitted |
+| `tags`                    | `string[]`                            | Replaces all tags    |
+| `privacyStatus`           | `"private" \| "unlisted" \| "public"` | Unchanged if omitted |
+| `embeddable`              | `boolean`                             | Unchanged if omitted |
+| `license`                 | `"youtube" \| "creativeCommon"`       | Unchanged if omitted |
+| `publicStatsViewable`     | `boolean`                             | Unchanged if omitted |
+| `selfDeclaredMadeForKids` | `boolean`                             | Unchanged if omitted |
+
+## `rate-video` / `get-video-rating`
+
+`rate-video` sets your rating (`like`, `dislike`, or `none`) on a single video. `get-video-rating` reads your existing rating back for up to 50 videos at once.
+
+## `delete-video`
+
+Permanently deletes a video you own. Requires `confirm: true` — there is no undo.
+
+## `upload-video`
+
+Uploads a video from a local file path via resumable upload — **1600 quota units**, 16% of the default 10,000/day budget in a single call.
+
+| Parameter       | Type                                  | Default     | Notes                         |
+| --------------- | ------------------------------------- | ----------- | ----------------------------- |
+| `filePath`      | `string`                              | —           | Required, absolute local path |
+| `title`         | `string`                              | —           | Required                      |
+| `description`   | `string`                              | `""`        |                               |
+| `categoryId`    | `string`                              | `"22"`      | People & Blogs                |
+| `tags`          | `string[]`                            | —           |                               |
+| `privacyStatus` | `"private" \| "unlisted" \| "public"` | `"private"` |                               |
+
+## `report-video-abuse`
+
+Reports a video to YouTube for a policy violation. This is an irreversible outward action reviewed against your account, so it requires `confirm: true`. Fetch valid `reasonId`/`secondaryReasonId` values with [`list-video-abuse-report-reasons`](/projects/mcp-youtube/docs/reference-data).

@@ -1,0 +1,35 @@
+---
+title: 💬 Community
+description: Subscriptions, comments, and comment threads — the tools that talk to other channels and viewers.
+---
+
+Ten tools cover subscribing to channels and participating in comment threads. Comments are a two-level resource: a **comment thread** is the top-level comment plus its reply count, and a **comment** is either that top-level comment or one of its replies.
+
+| Tool                            | Quota cost | Notes                                 |
+| ------------------------------- | ---------- | ------------------------------------- |
+| `list-subscriptions`            | 1 unit     | Your own subscriptions                |
+| `subscribe`                     | 50 units   |                                       |
+| `unsubscribe`                   | 50 units   | Requires `confirm: true`              |
+| `list-comment-threads`          | 1 unit     | Top-level comments on a video/channel |
+| `create-comment-thread`         | 50 units   | Posts a new top-level comment         |
+| `list-comments`                 | 1 unit     | Replies under a top-level comment     |
+| `reply-to-comment`              | 50 units   |                                       |
+| `update-comment`                | 50 units   | Edits your own comment's text         |
+| `delete-comment`                | 50 units   | Requires `confirm: true`              |
+| `set-comment-moderation-status` | 50 units   | Requires `confirm: true`              |
+
+## Subscriptions
+
+`list-subscriptions` lists channels you're subscribed to. `subscribe` follows a channel by ID. `unsubscribe` takes a **subscription ID** (from `list-subscriptions`), not a channel ID, and requires `confirm: true` since it's irreversible without re-subscribing.
+
+## Comment threads (top-level)
+
+`list-comment-threads` reads top-level comments for a `videoId` or `channelId`, ordered by `time` or `relevance`. `create-comment-thread` posts a brand-new top-level comment.
+
+## Comments (replies)
+
+`list-comments` reads the replies under a given `parentId` (a top-level comment ID). `reply-to-comment` posts a reply. `update-comment` edits the text of a comment you posted — the only mutable field is `textOriginal`, so there's no blanking risk and no read-first step. `delete-comment` permanently removes a comment and requires `confirm: true`.
+
+## `set-comment-moderation-status`
+
+Moderates one or more comments on your own videos: `published`, `heldForReview`, or `rejected` (which hides the comment from public view — this is the current replacement for the API's removed `markAsSpam` method). Optionally bans the author from commenting on your channel with `banAuthor: true`. Requires `confirm: true`, since this is a moderation action against someone else's content.

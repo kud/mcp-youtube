@@ -1,6 +1,6 @@
 ---
 title: ➕ Creating & Adding
-description: Creating new playlists and adding videos to them.
+description: Creating and updating playlists, adding videos, and reordering playlist items.
 ---
 
 ## `create-playlist`
@@ -36,3 +36,27 @@ Videos are added one at a time; if any individual add fails, it's collected into
 ```
 
 `quotaCost` reflects only the videos that actually succeeded (`added.length * 50`).
+
+## `update-playlist`
+
+Renames a playlist, changes its description, or changes its privacy. Costs **50 quota units**.
+
+This is a **full-replace** operation on the `snippet`/`status` parts — to avoid silently blanking fields you didn't mean to touch, the tool reads the playlist's current title/description/privacy first, then only overrides the fields you pass.
+
+| Parameter       | Type                                  | Default | Notes                |
+| --------------- | ------------------------------------- | ------- | -------------------- |
+| `playlistId`    | `string`                              | —       | Required             |
+| `title`         | `string`                              | —       | Unchanged if omitted |
+| `description`   | `string`                              | —       | Unchanged if omitted |
+| `privacyStatus` | `"private" \| "unlisted" \| "public"` | —       | Unchanged if omitted |
+
+## `update-playlist-item`
+
+Moves an item to a new position within a playlist (reorder). Costs **50 quota units**.
+
+| Parameter        | Type     | Default | Notes                              |
+| ---------------- | -------- | ------- | ---------------------------------- |
+| `playlistItemId` | `string` | —       | Required — the item to move        |
+| `playlistId`     | `string` | —       | Required                           |
+| `videoId`        | `string` | —       | Required                           |
+| `position`       | `number` | —       | Required — new zero-based position |

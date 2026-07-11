@@ -5,7 +5,7 @@
 ![npm](https://img.shields.io/npm/v/%40kud%2Fmcp-youtube?style=flat-square&color=CB3837)
 ![MIT](https://img.shields.io/badge/licence-MIT-22C55E?style=flat-square)
 
-**▶️ MCP server for YouTube — create, prune, and clean up playlists conversationally from Claude**
+**▶️ MCP server for the full YouTube Data API v3 — playlists, videos, channels, community, captions, and media, conversationally from Claude**
 
 <a href="https://kud.io/projects/mcp-youtube">Website</a> · <a href="https://kud.io/projects/mcp-youtube/docs">Documentation</a>
 
@@ -13,9 +13,12 @@
 
 ## Features
 
-- **Full playlist lifecycle** — search, list, read, create, add to, prune, and delete playlists, all through the official YouTube Data API v3
-- **Quota-aware by design** — every tool reports its cost, and the two destructive one-shots (`remove-from-playlist`, `delete-playlist`) refuse to run without `confirm: true`
+- **Full YouTube Data API v3 coverage** — 52 tools spanning playlists, videos, channels & sections, subscriptions, comments, captions, thumbnails, watermarks, playlist cover images, and read-only reference data, all under the `youtube.force-ssl` scope
+- **Quota-aware by design** — every tool documents its cost up front, from 1-unit reads to the 1600-unit `upload-video`
+- **Guarded destructive actions** — every delete, unsubscribe, moderation action, or other irreversible/outward tool refuses to run without `confirm: true`
+- **Full-replace done safely** — YouTube's `update` methods overwrite an entire resource part; tools like `update-video`, `update-playlist`, `update-channel`, and `update-channel-section` read the current resource first so an update that only changes one field never silently blanks the rest
 - **Safe bulk cleanup** — `clean-playlist` scans for `[Deleted video]`/`[Private video]` tombstones, duplicates, and videos from named channels, then defaults to a dry run so you see the plan before anything is removed
+- **Local-file media uploads** — videos, captions, thumbnails, watermarks, and playlist cover images all upload from a local file path via resumable upload where the API requires it
 - **One-time OAuth setup** — a desktop-flow `npm run setup` handles Google authorisation and prints a refresh token; you supply it (and the client id/secret) to the server via environment variables, from any store you like
 - **Typed end to end** — Zod-validated tool schemas and a Vitest suite covering every handler
 
@@ -57,18 +60,21 @@ export MCP_YOUTUBE_REFRESH_TOKEN=$(security find-generic-password -s mcp-youtube
 
 ## Usage
 
-YouTube's Data API v3 gives every project a fixed **10,000 quota units/day**. A single careless `search` or bulk delete can burn through a meaningful chunk of that, so every tool below states its cost up front — and the two irreversible ones require an explicit `confirm: true`.
+YouTube's Data API v3 gives every project a fixed **10,000 quota units/day**. A single careless `search`, bulk delete, or video upload can burn through a meaningful chunk of that, so every tool documents its cost up front — and every destructive or outward-irreversible tool requires an explicit `confirm: true`.
 
-| Tool                   | Quota cost                          | Notes                                          |
-| ---------------------- | ----------------------------------- | ---------------------------------------------- |
-| `search`               | 100 units                           | Videos, channels, or playlists — use sparingly |
-| `list-playlists`       | 1 unit                              | Lists the authenticated user's playlists       |
-| `get-playlist`         | 1 unit                              | Reads a playlist's items                       |
-| `create-playlist`      | 50 units                            | —                                              |
-| `add-to-playlist`      | 50 units / video                    | —                                              |
-| `remove-from-playlist` | 50 units / item                     | Requires `confirm: true`                       |
-| `clean-playlist`       | 1 unit / page scanned + 50 / delete | Defaults to `dryRun: true` — plan only         |
-| `delete-playlist`      | 50 units                            | Requires `confirm: true`                       |
+52 tools cover the full read/write surface reachable under the `youtube.force-ssl` scope:
+
+| Category            | Tools                                                                                                                                                                                                                                             | Docs                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Searching           | `search`, `list-playlists`, `get-playlist`                                                                                                                                                                                                        | [Searching](https://kud.io/projects/mcp-youtube/docs/searching)                       |
+| Playlists           | `create-playlist`, `update-playlist`, `add-to-playlist`, `update-playlist-item`                                                                                                                                                                   | [Creating & Adding](https://kud.io/projects/mcp-youtube/docs/creating-and-adding)     |
+| Cleaning            | `clean-playlist`                                                                                                                                                                                                                                  | [Cleaning Playlists](https://kud.io/projects/mcp-youtube/docs/cleaning-playlists)     |
+| Deleting            | `remove-from-playlist`, `delete-playlist`                                                                                                                                                                                                         | [Deleting & Pruning](https://kud.io/projects/mcp-youtube/docs/deleting-and-pruning)   |
+| Videos              | `list-videos`, `update-video`, `rate-video`, `get-video-rating`, `delete-video`, `upload-video`, `report-video-abuse`                                                                                                                             | [Videos](https://kud.io/projects/mcp-youtube/docs/videos)                             |
+| Channels & sections | `update-channel`, `list-channels`, `list-channel-sections`, `create-channel-section`, `update-channel-section`, `delete-channel-section`                                                                                                          | [Channels & Sections](https://kud.io/projects/mcp-youtube/docs/channels-and-sections) |
+| Community           | `list-subscriptions`, `subscribe`, `unsubscribe`, `list-comment-threads`, `create-comment-thread`, `list-comments`, `reply-to-comment`, `update-comment`, `delete-comment`, `set-comment-moderation-status`                                       | [Community](https://kud.io/projects/mcp-youtube/docs/community)                       |
+| Captions & media    | `list-captions`, `upload-caption`, `update-caption`, `download-caption`, `delete-caption`, `set-thumbnail`, `set-watermark`, `unset-watermark`, `list-playlist-images`, `upload-playlist-image`, `update-playlist-image`, `delete-playlist-image` | [Captions & Media](https://kud.io/projects/mcp-youtube/docs/captions-and-media)       |
+| Reference data      | `list-activities`, `list-video-categories`, `list-i18n-languages`, `list-i18n-regions`, `list-video-abuse-report-reasons`, `list-members`, `list-membership-levels`                                                                               | [Reference Data](https://kud.io/projects/mcp-youtube/docs/reference-data)             |
 
 Once installed, just talk to Claude:
 

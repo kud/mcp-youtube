@@ -1,0 +1,30 @@
+---
+title: 📚 Reference Data
+description: Channel activity and the read-only lookup lists — categories, languages, regions, abuse reasons, and memberships.
+---
+
+Seven tools, all read-only and all 1 quota unit per call. Six are static/near-static lookup lists useful for populating the enum-like fields other tools accept; one (`list-activities`) is a live feed of channel activity.
+
+| Tool                              | Quota cost | Notes                                      |
+| --------------------------------- | ---------- | ------------------------------------------ |
+| `list-activities`                 | 1 unit     | Uploads, likes, playlist adds, etc.        |
+| `list-video-categories`           | 1 unit     | Assignable categories for a region         |
+| `list-i18n-languages`             | 1 unit     | Application languages YouTube supports     |
+| `list-i18n-regions`               | 1 unit     | Content regions YouTube supports           |
+| `list-video-abuse-report-reasons` | 1 unit     | Valid `reasonId`s for `report-video-abuse` |
+| `list-members`                    | 1 unit     | **Monetisation-gated**                     |
+| `list-membership-levels`          | 1 unit     | **Monetisation-gated**                     |
+
+## `list-activities`
+
+Reads recent channel activity (uploads, likes, playlist additions, subscriptions, and more) for a channel, or your own if `channelId` is omitted.
+
+## Lookup lists
+
+`list-video-categories` (filtered by `regionCode`, default `US`), `list-i18n-languages`, and `list-i18n-regions` return the reference data YouTube itself uses to populate category pickers and language/region selectors. `list-video-abuse-report-reasons` returns the `reasonId`/`secondaryReasonId` values accepted by [`report-video-abuse`](/projects/mcp-youtube/docs/videos).
+
+> **Removed from the API:** `guideCategories.list` no longer exists — YouTube deprecated and removed the GuideCategories resource, and it isn't present in the current `googleapis` client. There's no replacement to wrap.
+
+## `list-members` / `list-membership-levels`
+
+⚠️ **Monetisation-gated.** Both tools call endpoints that require an active YouTube Partner Program channel with channel memberships enabled — on any other channel they return a 403. `list-members` lists people who are members of your channel; `list-membership-levels` lists the pricing tiers you've configured.

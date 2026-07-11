@@ -1,0 +1,37 @@
+---
+title: 📝 Captions & Media
+description: Caption tracks, thumbnails, watermarks, and playlist cover images — all local-file uploads.
+---
+
+Eleven tools cover media assets uploaded from a local file path: caption tracks, video thumbnails, channel watermarks, and playlist cover images.
+
+| Tool                    | Quota cost | Notes                            |
+| ----------------------- | ---------- | -------------------------------- |
+| `list-captions`         | 50 units   | Caption tracks for a video       |
+| `upload-caption`        | 400 units  | Local file (SRT/VTT/SBV/TTML)    |
+| `update-caption`        | 450 units  | Draft status, optional re-upload |
+| `download-caption`      | 200 units  | Writes to a local file path      |
+| `delete-caption`        | 50 units   | Requires `confirm: true`         |
+| `set-thumbnail`         | 50 units   | Local image file                 |
+| `set-watermark`         | 50 units   | Local image file                 |
+| `unset-watermark`       | 50 units   | Requires `confirm: true`         |
+| `list-playlist-images`  | 1 unit     | Cover images for a playlist      |
+| `upload-playlist-image` | 50 units   | Local image file                 |
+| `update-playlist-image` | 50 units   | Replace an existing cover's file |
+| `delete-playlist-image` | 50 units   | Requires `confirm: true`         |
+
+## Captions
+
+`list-captions` reads the caption tracks on a video. `upload-caption` uploads a new track from a local file — pass `language` (BCP-47, e.g. `en`) and a display `name`. `update-caption` changes a track's draft status and can optionally re-upload its content from a local `filePath`. `download-caption` writes a track to a local `outputPath`, optionally converting `format` (e.g. `srt`, `vtt`, `ttml`) or translating to another `language`. `delete-caption` permanently removes a track and requires `confirm: true`.
+
+## Thumbnails and watermarks
+
+`set-thumbnail` uploads and sets a video's custom thumbnail from a local image. `set-watermark` uploads and sets a channel's video watermark, positioned in a screen corner (`topLeft`/`topRight`/`bottomLeft`/`bottomRight`) with `offsetMs`/`durationMs` timing controls. `unset-watermark` removes it and requires `confirm: true`.
+
+## Playlist images
+
+Playlist cover images are a newer resource for playlist artwork. `list-playlist-images` reads the images attached to a playlist (`parent`). `upload-playlist-image` and `update-playlist-image` upload from a local file. `delete-playlist-image` permanently removes one and requires `confirm: true`.
+
+## MIME type detection
+
+All upload tools infer the MIME type from the file extension (`.mp4`, `.mov`, `.webm`, `.png`, `.jpg`, `.srt`, `.vtt`, and others) — there's no separate `mimeType` parameter to set.
