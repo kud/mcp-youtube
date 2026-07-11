@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "mcp-youtube": "./dist/index.js"
+    "mcp-youtube": "dist/index.js"
   },
   "scripts": {
     "setup": "node setup.js",
