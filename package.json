@@ -1,6 +1,6 @@
 {
   "name": "@kud/mcp-youtube",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "MCP server for YouTube — manage playlists conversationally: create, add, prune, and clean up tombstones and duplicates.",
   "main": "dist/index.js",
@@ -10,8 +10,8 @@
   },
   "scripts": {
     "setup": "node setup.js",
-    "build": "tsc -p tsconfig.json && chmod +x dist/index.js",
-    "build:watch": "tsc -p tsconfig.json --watch",
+    "build": "tsc -p tsconfig.build.json && chmod +x dist/index.js",
+    "build:watch": "tsc -p tsconfig.build.json --watch",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",
