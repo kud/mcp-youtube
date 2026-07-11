@@ -60,7 +60,9 @@ console.log("─────────────────")
 console.log("1. Go to https://console.cloud.google.com/apis/credentials")
 console.log("2. Enable the 'YouTube Data API v3' for your project")
 console.log("3. Create an OAuth client ID of type 'Desktop app'")
-console.log(`4. Add this authorized redirect URI: ${REDIRECT_URI}\n`)
+console.log(
+  "   (Desktop app clients auto-trust any localhost redirect — no need to register one)\n",
+)
 
 const existing = readExistingConfig()
 
