@@ -47,7 +47,7 @@
   "bugs": {
     "url": "https://github.com/kud/mcp-youtube/issues"
   },
-  "homepage": "https://github.com/kud/mcp-youtube#readme",
+  "homepage": "https://kud.io/projects/mcp-youtube",
   "engines": {
     "node": ">=20.0.0"
   },
